@@ -1,6 +1,5 @@
 import os
 from datetime import timedelta
-
 import environ
 from pathlib import Path
 
@@ -28,20 +27,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'corsheaders',
     'drf_spectacular',
     'rest_framework',
     'django_filters',
     'djoser',
+    'phonenumber_field',
 
     'api',
     'common',
+    'users',
 ]
-INSTALLED_APPS += ['corsheaders'] # CORS headers for cross-origin requests
 
-MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Ensure CORS middleware is at the top
-    ...
-]
+
 # region ---------------------- CORS HEADERS -----------------------------------------------
 CORS_ORIGIN_ALLOW_ALL = True  # Allow all origins
 CORS_ALLOW_CREDENTIALS = True
@@ -57,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -189,3 +188,4 @@ MEDIA_TEST_ROOT = os.path.join(BASE_DIR, 'media/test/')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'users.User'
