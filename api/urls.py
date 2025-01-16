@@ -1,5 +1,6 @@
 from api.spectacular.urls import urlpatterns as doc_api
 from users.urls import urlpatterns as user_api
+
 api_name = 'api'
 
 urlpatterns = []
