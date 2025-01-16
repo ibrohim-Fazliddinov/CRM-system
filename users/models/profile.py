@@ -25,3 +25,6 @@ class Profile(models.Model):
         verbose_name='Телефон',
         null=True
     )
+
+    class Meta:
+        verbose_name = 'Profile'
