@@ -1,7 +1,6 @@
 import os
 from datetime import timedelta
 import environ
-from pathlib import Path
 
 # region ---------------------- BASE CONFIGURATION -----------------------------------------
 root = environ.Path(__file__) - 2  # Define the project root directory
@@ -17,8 +16,6 @@ DEBUG = env.bool('DEBUG', default=False)
 ALLOWED_HOSTS = env.str('ALLOWED_HOSTS', default='').split(' ')
 # endregion ---------------------------------------------------------------------------------
 
-# Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -27,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third-part applications
     'corsheaders',
     'drf_spectacular',
     'rest_framework',
@@ -34,11 +32,12 @@ INSTALLED_APPS = [
     'djoser',
     'phonenumber_field',
 
+    # Applications for my project
     'api',
     'common',
     'users',
-]
 
+]
 
 # region ---------------------- CORS HEADERS -----------------------------------------------
 CORS_ORIGIN_ALLOW_ALL = True  # Allow all origins
@@ -78,7 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # region ------------------------- DATABASE CONFIGURATION -----------------------------------
 DATABASES = {
     # 'default': {
@@ -95,7 +93,6 @@ DATABASES = {
     }
 }
 # endregion ---------------------------------------------------------------------------------
-
 
 # region ---------------------- REST FRAMEWORK ----------------------------------------------
 REST_FRAMEWORK = {
@@ -129,7 +126,6 @@ DJOSER = {
     'SERIALIZERS': {},
 }
 # endregion -------------------------------------------------------------------------
-
 
 # region ---------------------- SPECTACULAR SETTINGS --------------------------------------
 SPECTACULAR_SETTINGS = {

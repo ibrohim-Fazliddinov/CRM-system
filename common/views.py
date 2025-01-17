@@ -76,6 +76,7 @@ class ExtendedView:
 
         return [permission() for permission in self.permission_classes]
 
+
 class ExtendedGenericViewSet(ExtendedView, GenericViewSet):
     """Расширенный набор общих представлений."""
     pass
