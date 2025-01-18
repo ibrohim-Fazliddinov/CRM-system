@@ -15,15 +15,15 @@ class ExtendedView:
 
     Атрибуты:
         multi_serializer_class (Optional[Dict[str, Type[Serializer]]]):
-            Словарь с привязкой действий (или методов) к сериализаторам.
+            Словарь, связывающий действия (или HTTP-методы) с соответствующими классами сериализаторов.
         multi_permission_classes (Optional[Dict[str, List[Type[BasePermission]]]]):
-            Словарь с привязкой действий (или методов) к классам разрешений.
+            Словарь, связывающий действия (или HTTP-методы) с соответствующими классами разрешений.
         permission_classes (Tuple[Type[BasePermission], ...]):
-            Классы разрешений по умолчанию.
+            Классы разрешений по умолчанию, если для действия или метода разрешения не указаны.
         serializer_class (Optional[Type[Serializer]]):
             Сериализатор по умолчанию, если multi_serializer_class не указан.
         request (Optional[Request]):
-            Текущий объект запроса, содержащий метод HTTP и данные.
+            Объект текущего запроса, содержащий метод HTTP и данные запроса.
     """
     multi_serializer_class: Optional[Dict[str, Type[Serializer]]] = None
     multi_permission_classes: Optional[Dict[str, List[Type[BasePermission]]]] = None
@@ -31,38 +31,53 @@ class ExtendedView:
     serializer_class: Optional[Type[Serializer]] = None
     request: Optional[Request] = None
 
+    def __get_action_or_method(self):
+        """
+        Определяет текущее действие (action) или HTTP-метод.
+
+        Если у объекта есть атрибут `action`, он возвращается. Иначе возвращается
+        HTTP-метод текущего запроса.
+
+        Возвращает:
+            str: Название текущего действия или HTTP-метод.
+        """
+        if hasattr(self, 'action') and self.action:
+            return self.action
+        return self.request.method
+
     def get_serializer_class(self) -> Type[Serializer]:
         """
-        Возвращает сериализатор для текущего действия или HTTP-метода.
+        Возвращает класс сериализатора для текущего действия или HTTP-метода.
 
-        Если `multi_serializer_class` не указан, используется `serializer_class`.
+        Если `multi_serializer_class` не задан, используется `serializer_class`.
 
         Возвращает:
             Type[Serializer]: Класс сериализатора.
 
         Исключения:
-            AssertionError: Если оба атрибута (`serializer_class` и `multi_serializer_class`) не определены.
+            AssertionError: Если ни `serializer_class`, ни `multi_serializer_class` не заданы.
         """
         assert self.serializer_class or self.multi_serializer_class, (
-            '"%s" должен либо включать `serializer_classes`, '
-            '`multi_serializer_classes`, атрибут, либо переопределять '
-            '`get_serializer_class()` метод.' % self.__class__.__name__
+            f'"{self.__class__.__name__}" должен включать либо "serializer_class", '
+            f'"multi_serializer_class", либо переопределять метод "get_serializer_class()".'
         )
+
         if not self.multi_serializer_class:
             return self.serializer_class  # type: ignore
-        # raise NotImplementedError(
-        #     "multi_serializer_class поддержка не реализована в данном методе."
-        # )
+
+        action = self.__get_action_or_method()
+        return self.multi_serializer_class.get(action) or self.serializer_class
 
     def get_permission(self) -> List[BasePermission]:
         """
         Возвращает список разрешений для текущего действия или HTTP-метода.
 
         Если `multi_permission_classes` определён, используются разрешения,
-        привязанные к текущему действию или методу. Иначе — `permission_classes`.
+        привязанные к текущему действию или методу. В противном случае используются
+        классы из `permission_classes`.
 
         Возвращает:
-            List[BasePermission]: Список экземпляров разрешений.
+            List[BasePermission]: Список экземпляров классов разрешений.
         """
         if hasattr(self, 'action'):
             action = self.action  # type: ignore
@@ -75,6 +90,7 @@ class ExtendedView:
                 return [permission() for permission in permissions]
 
         return [permission() for permission in self.permission_classes]
+
 
 
 class ExtendedGenericViewSet(ExtendedView, GenericViewSet):
