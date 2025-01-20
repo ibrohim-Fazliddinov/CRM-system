@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING
-
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from users.views.auth import CustomTokenObtainPairView, CustomTokenRefreshView, CustomTokenVerifyView
@@ -51,5 +49,5 @@ urlpatterns = [
     path('auth/jwt/create', CustomTokenObtainPairView.as_view(), name='create-token'),
     path('auth/jwt/refresh', CustomTokenRefreshView.as_view(), name='refresh-token'),
     path('auth/jwt/verify', CustomTokenVerifyView.as_view(), name='verify-token'),
-    path('users/', include(filtered_user_routes)),
+    *filtered_user_routes,  # Распаковка отфильтрованных маршрутов
 ]
