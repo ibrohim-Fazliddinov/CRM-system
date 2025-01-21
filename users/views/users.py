@@ -8,6 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import HTTP_204_NO_CONTENT
 from common.views import ExtendedUserViewSet
+from rest_framework.filters import SearchFilter, OrderingFilter
 from users.serializers.api.serializer_user import (
     RegistrationsSerializer,
     UserSearchListSerializer,
@@ -17,30 +18,30 @@ from users.serializers.api.serializer_user import (
     CustomResetPasswordSerializer,
     CustomResetPasswordConfirmSerializer,
 )
-from rest_framework.filters import SearchFilter, OrderingFilter
+
 User = get_user_model()
 
 
 @extend_schema_view(
     registration=extend_schema(
         summary='Регистрация нового пользователя.',
-        tags=['Пользователь']
+        tags=['👤 Пользователь']
     ),
     activate=extend_schema(
         summary='Активация учетной записи пользователя.',
-        tags=['Пользователь']
+        tags=['👤 Пользователь']
     ),
     user_search=extend_schema(
         summary='Поиск пользователей по заданным фильтрам.',
-        tags=['Пользователь']
+        tags=['👤 Пользователь']
     ),
     user_list=extend_schema(
         summary='Получение списка пользователей.',
-        tags=['Пользователь']
+        tags=['👤 Пользователь']
     ),
     user_update=extend_schema(
         summary='Обновление данных пользователя.',
-        tags=['Пользователь']
+        tags=['👤 Пользователь']
     )
 )
 class AuthView(ExtendedUserViewSet):
