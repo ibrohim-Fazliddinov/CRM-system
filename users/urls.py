@@ -1,27 +1,9 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from common.utils import filter_routes
 from users.views.auth import CustomTokenObtainPairView, CustomTokenRefreshView, CustomTokenVerifyView
 from users.views.users import AuthView, PasswordChangingView
 
-if TYPE_CHECKING:
-    from django.urls.resolvers import URLPattern
-
-
-def filter_routes(urls: list[URLPattern], allowed_patterns: tuple[str, ...]) -> list[URLPattern]:
-    """
-    Фильтрация маршрутов: оставляет только URL-адреса, содержащие шаблоны из списка разрешенных.
-
-    :param urls: Список URL-адресов для фильтрации.
-    :param allowed_patterns: Кортеж шаблонов для разрешения.
-    :return: Отфильтрованный список URL-адресов.
-    """
-    filtered_urls = []
-    for url in urls:
-        if any(pattern in url.pattern.describe() for pattern in allowed_patterns):
-            filtered_urls.append(url)
-    return filtered_urls
 
 # Настройка маршрутов
 router = DefaultRouter()
@@ -39,6 +21,12 @@ allowed_urls = (
     'auth/user_list/',
     'auth/user_search/',
     'auth/user_update/',
+
+    'client/',  # Создать сотрудника организации
+    'client/client_create/',  # Регистрация нового сотрудника организации
+    'client/client_list/',  # Получить список сотрудников организации
+    'client/client_update/',  # Обновление информации о сотруднике организации (PUT)
+    'client/search/',  # Поиск сотрудника организации
 )
 
 # Фильтруем маршруты пользователей

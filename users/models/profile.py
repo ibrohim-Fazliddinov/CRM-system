@@ -2,9 +2,12 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
+from common.models.models import BaseModel
+
+
 # User = get_user_model()
 
-class Profile(models.Model):
+class Profile(BaseModel):
 
     user = models.OneToOneField(
         to='users.User',

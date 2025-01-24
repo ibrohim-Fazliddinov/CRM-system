@@ -100,7 +100,6 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class UserSearchListSerializer(serializers.ModelSerializer):
     """
     Сериализатор для поиска пользователей.
@@ -111,7 +110,8 @@ class UserSearchListSerializer(serializers.ModelSerializer):
             'id',
             'username',
             'email',
-            'get_full_name',
+            'first_name',
+            'last_name'
         )
 
 
@@ -146,8 +146,7 @@ class UserListSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'id',
-            'first_name',
-            'last_name',
+            'get_full_name',
             'email',
             'profile',
         )
