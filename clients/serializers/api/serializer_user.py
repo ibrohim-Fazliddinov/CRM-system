@@ -54,6 +54,7 @@ class CreateClientSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'email',
+            'name',
             'password',
         )
 

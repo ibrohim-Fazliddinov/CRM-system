@@ -155,6 +155,7 @@ class UserListSerializer(serializers.ModelSerializer):
 class UserUpdateSerializer(serializers.ModelSerializer):
     """
     Сериализатор для обновления данных пользователя.
+
     """
     profile = ProfileUpdateSerializer()
 
