@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError
-from clients.models import Client
+from clients.models.client import Client
 from users.serializers.api.serializer_user import UserListSerializer
 User = get_user_model()
 

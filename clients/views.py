@@ -1,5 +1,5 @@
 from typing import Any
-from clients.serializers.api.serializer_user import (
+from clients.serializers.api.client import (
     ClientListSerializer,
     CreateClientSerializer,
     ClientSearchSerializer,
