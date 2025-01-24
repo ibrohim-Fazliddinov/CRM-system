@@ -1,3 +1,5 @@
+from typing import Any
+
 from rest_framework import status
 from clients.serializers.api.serializer_user import (
     ClientListSerializer,
@@ -39,8 +41,21 @@ class ClientView(CRUDListViewSet):
     """
     Набор представлений для управления клиентами.
 
-    Содержит методы для создания, поиска, обновления и получения списка клиентов.
+    Этот класс включает методы для создания, обновления, удаления, поиска и получения списка клиентов.
+
+    Атрибуты:
+        queryset (QuerySet): Набор данных, содержащий всех клиентов.
+        serializer_class (Serializer): Основной сериализатор для отображения списка клиентов.
+        multi_serializer_class (dict): Словарь сериализаторов для различных действий (создание, поиск, обновление, удаление).
+
+    Методы:
+        search: Поиск клиентов по заданным параметрам.
+        client_list: Получение списка всех клиентов.
+        client_create: Регистрация нового клиента.
+        client_update: Обновление информации о клиенте.
+        client_delete: Удаление клиента.
     """
+
     queryset = Client.objects.all()
     serializer_class = ClientListSerializer
 
@@ -52,69 +67,77 @@ class ClientView(CRUDListViewSet):
     }
 
     @action(methods=['GET'], detail=False, url_path='search')
-    def search(self, request, *args, **kwargs):
+    def search(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         """
-        Метод для поиска клиентов.
+        Поиск клиентов по заданным параметрам.
 
         Параметры:
-            request: объект запроса, содержащий параметры для фильтрации.
+            request (Request): Объект запроса, содержащий параметры для фильтрации.
 
         Возвращает:
-            Response: Сериализованный список найденных клиентов.
+            Response: Сериализованный список клиентов, соответствующих заданным фильтрам.
         """
         return super().list(request, *args, **kwargs)
 
     @action(methods=['GET'], detail=False)
-    def client_list(self, request: Request, *args: None, **kwargs: None) -> Response:
+    def client_list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         """
-        Метод для получения списка сотрудников.
-
-        Использует стандартный метод retrieve для получения списка всех сотрудников.
+        Получение списка всех клиентов.
 
         Параметры:
-            request: объект запроса, содержащий параметры фильтрации (если применимо).
+            request (Request): Объект запроса.
 
         Возвращает:
-            Response: Сериализованный список сотрудников.
+            Response: Сериализованный список всех клиентов.
         """
         return self.retrieve(request, *args, **kwargs)
 
     @action(methods=['POST'], detail=False)
-    def client_create(self, request: Request, *args: None, **kwargs: None) -> Response:
+    def client_create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         """
-        Метод для регистрации нового сотрудника.
+        Регистрация нового клиента.
 
-        Использует сериализатор CreateClientSerializer для валидации и создания записи.
+        Используется сериализатор CreateClientSerializer для валидации и создания нового клиента.
 
         Параметры:
-            request: объект запроса, содержащий данные для регистрации нового сотрудника.
+            request (Request): Объект запроса, содержащий данные для создания клиента.
 
         Возвращает:
-            Response: Ответ с результатом создания нового сотрудника.
+            Response: Ответ с результатом операции создания клиента.
         """
         return self.create(request, *args, **kwargs)
 
     @action(methods=['PUT', 'PATCH'], detail=False)
-    def client_update(self, request: Request, *args, **kwargs) -> Response:
+    def client_update(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         """
-        Метод для обновления информации о сотруднике.
+        Обновление информации о клиенте.
 
-        Поддерживает полный (PUT) и частичный (PATCH) методы обновления.
+        Поддерживает полный (PUT) и частичный (PATCH) методы обновления. Используется соответствующий сериализатор ClientUpdateSerializer.
 
         Параметры:
-            request: объект запроса, содержащий данные для обновления.
+            request (Request): Объект запроса, содержащий данные для обновления клиента.
 
         Возвращает:
-            Response: Ответ с результатом обновления информации о сотруднике.
+            Response: Ответ с результатом обновления информации о клиенте.
         """
-        update_methods = {'PUT': self.update, 'PATCH': self.partial_update}
-        for method, func in update_methods.items():
-            if method == request.method:
-                return func(request, *args, **kwargs)
+        if request.method == 'PUT':
+            return self.update(request, *args, **kwargs)
+        elif request.method == 'PATCH':
+            return self.partial_update(request, *args, **kwargs)
 
-    @action(methods=['DELETE'], detail=True)  # detail=True, для работы с объектом по его pk
-    def client_delete(self, request: Request, pk=None) -> Response:
-        """Удаление конкретного объекта"""
-        instance = self.get_object()  # Получение объекта по pk
+    @action(methods=['DELETE'], detail=True)
+    def client_delete(self, request: Request, pk: int = None) -> Response:
+        """
+        Удаление клиента по идентификатору.
+
+        Параметры:
+            request (Request): Объект запроса.
+            pk (int, optional): Идентификатор клиента, которого необходимо удалить.
+
+        Возвращает:
+            Response: Ответ с подтверждением успешного удаления.
+        """
+        instance = self.get_object()
         self.perform_destroy(instance)
-        return Response({'detail': 'Объект успешно удален.'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'Клиент успешно удален.'}, status=status.HTTP_204_NO_CONTENT)
+

@@ -5,7 +5,8 @@ from common.utils import filter_routes
 
 router = DefaultRouter()
 router.register(r'client', ClientView, 'client')
-# Разрешенные URL-шаблоны
+
+
 allowed_urls = (
     'client/client_create/',
     'client/client_list/',
@@ -13,8 +14,6 @@ allowed_urls = (
     'client/search/',
 )
 
-
-# Фильтруем маршруты пользователей
 filtered_routes = filter_routes(router.urls, allowed_urls)
 urlpatterns = [
     *filtered_routes
