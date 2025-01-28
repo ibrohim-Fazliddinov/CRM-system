@@ -144,11 +144,12 @@ class CRDListViewSet(
     pass
 
 
-class CUDViewSet(
+class CLUDViewSet(
     ExtendedGenericViewSet,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
 ):
     """
     Класс представления включающий в себя базовые операции, кроме RetrieveModelMixin.

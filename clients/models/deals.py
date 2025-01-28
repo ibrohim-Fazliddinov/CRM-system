@@ -24,9 +24,7 @@ class Deal(BaseModel, InfoMixin):
         default='NEW',
         verbose_name='Статус сделки'
     )
-    amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+    amount = models.PositiveSmallIntegerField(
         verbose_name='Сумма сделки'
     )
     manager = models.ForeignKey(

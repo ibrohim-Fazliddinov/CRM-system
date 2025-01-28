@@ -11,7 +11,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
-from .models import Client
+from clients.models.client import Client
 
 @extend_schema_view(
     search=extend_schema(
@@ -62,7 +62,7 @@ class ClientView(CRUDListViewSet):
     """
 
     queryset = Client.objects.all()
-
+    serializer_class = ClientListSerializer
     multi_serializer_class = {
         'create': CreateClientSerializer,
         'client_search': ClientSearchSerializer,
