@@ -1,9 +1,7 @@
 from rest_framework import serializers
-
 from clients.models.client import Client
 from clients.models.deals import Deal
 from clients.serializers.api.client import ClientListSerializer
-from users.serializers.api.serializer_user import UserListSerializer
 
 class BaseDealSerializer(serializers.ModelSerializer):
     """
