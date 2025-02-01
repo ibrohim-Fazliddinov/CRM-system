@@ -6,24 +6,36 @@ from clients.serializers.api.task import TaskCreateSerializer, TaskUpdateSeriali
     TaskDeleteSerializer
 from common.views import CLUDViewSet
 
+
 @extend_schema_view(
     create=extend_schema(
-        summary='', tags=['📄Задачи']
+        summary='Создание новой задачи', tags=['📄Задачи']
     ),
     update=extend_schema(
-        summary='', tags=['📄Задачи']
+        summary='Обновление задачи', tags=['📄Задачи']
     ),
     partial_update=extend_schema(
-        summary='', tags=['📄Задачи']
+        summary='Частичное обновление задачи', tags=['📄Задачи']
     ),
     destroy=extend_schema(
-        summary='', tags=['📄Задачи']
+        summary='Удаление задачи', tags=['📄Задачи']
     ),
     list=extend_schema(
-        summary='', tags=['📄Задачи']
+        summary='Получение списка задач', tags=['📄Задачи']
     ),
 )
 class TaskView(CLUDViewSet):
+    """
+    Представление для управления задачами.
+
+    Доступные действия:
+    - Создание задачи
+    - Обновление задачи
+    - Частичное обновление задачи
+    - Удаление задачи
+    - Получение списка задач
+    """
+
     queryset = Task.objects.all()
     multi_serializer_class = {
         'create': TaskCreateSerializer,
@@ -32,8 +44,12 @@ class TaskView(CLUDViewSet):
         'list': TaskListSerializer,
         'delete': TaskDeleteSerializer,
     }
+
     def perform_create(self, serializer: TaskCreateSerializer) -> None:
         """
-        Автоматически назначает текущего пользователя менеджером сделки перед сохранением.
+        Автоматически назначает текущего пользователя менеджером задачи перед сохранением.
+
+        :param serializer: Сериализатор для создания задачи.
         """
         serializer.save(manager=self.request.user)
+

@@ -6,8 +6,14 @@ from clients.serializers.nested.client import ClientSHortSerializer
 
 
 class TaskListSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для получения списка задач.
+
+    Включает информацию о клиенте и сделке.
+    """
     client = ClientSHortSerializer()
     deal = BaseDealSerializer()
+
     class Meta:
         model = Task
         fields = (
@@ -23,11 +29,19 @@ class TaskListSerializer(serializers.ModelSerializer):
             'updated_by',
         )
 
+
 class TaskCreateSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для создания задачи.
+
+    - `deal` — отображает связанную сделку (только для чтения).
+    - `deal_id` — принимает ID сделки при создании задачи.
+    """
     deal = DealListSerializer(read_only=True)  # Поле для ответа (только для чтения)
     deal_id = serializers.PrimaryKeyRelatedField(
         queryset=Deal.objects.all(), source='deal', write_only=True  # Поле для запроса (только для записи)
     )
+
     class Meta:
         model = Task
         fields = (
@@ -41,8 +55,15 @@ class TaskCreateSerializer(serializers.ModelSerializer):
             'deal_id',
         )
 
+
 class TaskUpdateSerializer(serializers.ModelSerializer):
-    deal = DealListSerializer(read_only=True)  # Поле для ответа (только для чтения)
+    """
+    Сериализатор для обновления задачи.
+
+    - `deal` — отображает связанную сделку (только для чтения).
+    """
+    deal = DealListSerializer(read_only=True)
+
     class Meta:
         model = Task
         fields = (
@@ -55,7 +76,14 @@ class TaskUpdateSerializer(serializers.ModelSerializer):
             'deal',
         )
 
+
 class TaskDeleteSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для удаления задачи.
+
+    Возвращает все поля объекта перед удалением.
+    """
+
     class Meta:
         model = Task
         fields = '__all__'
