@@ -13,7 +13,7 @@ class Task(BaseModel, InfoMixin):
         ('MID', 'Средний'),
         ('HIG', 'Высокий'),
     ]
-    STATUS_CHOICES = [
+    STATUS_CHOICES_TASK = [
         ('PEN', 'В ожидании'),
         ('COM', 'Завершена'),
     ]
@@ -25,9 +25,9 @@ class Task(BaseModel, InfoMixin):
     description = models.TextField(
         verbose_name='Описание задачи'
     )
-    status = models.CharField(
+    status_task = models.CharField(
         max_length=3,
-        choices=STATUS_CHOICES,
+        choices=STATUS_CHOICES_TASK,
         default='PEN',
         verbose_name='Статус задачи'
     )

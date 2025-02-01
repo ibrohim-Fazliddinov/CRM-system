@@ -1,8 +1,61 @@
 from rest_framework import serializers
 from clients.models.deals import Deal
+from clients.models.tasks import Task
+from clients.serializers.api.deal import DealListSerializer, BaseDealSerializer
+from clients.serializers.nested.client import ClientSHortSerializer
 
 
-class TaskList(serializers.ModelSerializer):
+class TaskListSerializer(serializers.ModelSerializer):
+    client = ClientSHortSerializer()
+    deal = BaseDealSerializer()
     class Meta:
-        model = Deal
+        model = Task
+        fields = (
+            'id',
+            'name',
+            'description',
+            'priority',
+            'status_task',
+            'due_date',
+            'deal',
+            'client',
+            'created_by',
+            'updated_by',
+        )
+
+class TaskCreateSerializer(serializers.ModelSerializer):
+    deal = DealListSerializer(read_only=True)  # Поле для ответа (только для чтения)
+    deal_id = serializers.PrimaryKeyRelatedField(
+        queryset=Deal.objects.all(), source='deal', write_only=True  # Поле для запроса (только для записи)
+    )
+    class Meta:
+        model = Task
+        fields = (
+            'id',
+            'name',
+            'description',
+            'status_task',
+            'due_date',
+            'priority',
+            'deal',
+            'deal_id',
+        )
+
+class TaskUpdateSerializer(serializers.ModelSerializer):
+    deal = DealListSerializer(read_only=True)  # Поле для ответа (только для чтения)
+    class Meta:
+        model = Task
+        fields = (
+            'id',
+            'name',
+            'description',
+            'status_task',
+            'priority',
+            'due_date',
+            'deal',
+        )
+
+class TaskDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
         fields = '__all__'

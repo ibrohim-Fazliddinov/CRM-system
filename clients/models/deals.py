@@ -8,7 +8,7 @@ from common.models.models import BaseModel
 User = get_user_model()
 
 class Deal(BaseModel, InfoMixin):
-    STATUS_CHOICES = [
+    STATUS_CHOICES_DEAL = [
         ('NEW', 'Новая'),
         ('PRG', 'В работе'),
         ('COM', 'Завершена'),
@@ -18,9 +18,9 @@ class Deal(BaseModel, InfoMixin):
         max_length=255,
         verbose_name='Название сделки'
     )
-    status = models.CharField(
+    status_deal = models.CharField(
         max_length=3,
-        choices=STATUS_CHOICES,
+        choices=STATUS_CHOICES_DEAL,
         default='NEW',
         verbose_name='Статус сделки'
     )

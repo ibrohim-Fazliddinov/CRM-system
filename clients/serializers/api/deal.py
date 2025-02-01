@@ -2,6 +2,8 @@ from rest_framework import serializers
 from clients.models.client import Client
 from clients.models.deals import Deal
 from clients.serializers.api.client import ClientListSerializer
+from clients.serializers.nested.client import ClientSHortSerializer
+
 
 class BaseDealSerializer(serializers.ModelSerializer):
     """
@@ -13,7 +15,7 @@ class BaseDealSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
-            'status',
+            'status_deal',
             'amount',
         )
 
@@ -42,7 +44,7 @@ class DealCreateSerializer(BaseDealSerializer):
     Сериализатор для создания новой сделки.
     Поддерживает чтение информации о клиенте и запись через client_id.
     """
-    client = ClientListSerializer(read_only=True)  # Поле для ответа (только для чтения)
+    client = ClientSHortSerializer(read_only=True)  # Поле для ответа (только для чтения)
     client_id = serializers.PrimaryKeyRelatedField(
         queryset=Client.objects.all(), source='client', write_only=True  # Поле для запроса (только для записи)
     )
@@ -68,11 +70,4 @@ class DealDeleteSerializer(serializers.ModelSerializer):
         model = Deal
         fields = '__all__'
 
-    def validate(self, attrs):
-        """
-        Дополнительная проверка перед удалением.
-        Например, нельзя удалить сделку со статусом 'Active'.
-        """
-        if attrs.get('status') == 'Active':
-            raise serializers.ValidationError("Нельзя удалить активную сделку.")
-        return attrs
+
