@@ -45,5 +45,5 @@ class Deal(BaseModel, InfoMixin):
         verbose_name_plural = 'Сделки'
 
     def __str__(self):
-        return f'{self.name} ({self.get_status_display()})'
+        return f'{self.name}'
 

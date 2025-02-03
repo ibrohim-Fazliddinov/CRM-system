@@ -1,27 +1,29 @@
 from drf_spectacular.utils import extend_schema_view, extend_schema
-from requests import delete
-
 from clients.models.tasks import Task
-from clients.serializers.api.task import TaskCreateSerializer, TaskUpdateSerializer, TaskListSerializer, \
+from clients.serializers.api.task import (
+    TaskCreateSerializer,
+    TaskUpdateSerializer,
+    TaskListSerializer,
     TaskDeleteSerializer
+)
 from common.views import CLUDViewSet
 
 
 @extend_schema_view(
     create=extend_schema(
-        summary='Создание новой задачи', tags=['📄Задачи']
+        summary='Создание новой задачи', tags=['📄 Задачи']
     ),
     update=extend_schema(
-        summary='Обновление задачи', tags=['📄Задачи']
+        summary='Обновление задачи', tags=['📄 Задачи']
     ),
     partial_update=extend_schema(
-        summary='Частичное обновление задачи', tags=['📄Задачи']
+        summary='Частичное обновление задачи', tags=['📄 Задачи']
     ),
     destroy=extend_schema(
-        summary='Удаление задачи', tags=['📄Задачи']
+        summary='Удаление задачи', tags=['📄 Задачи']
     ),
     list=extend_schema(
-        summary='Получение списка задач', tags=['📄Задачи']
+        summary='Получение списка задач', tags=['📄 Задачи']
     ),
 )
 class TaskView(CLUDViewSet):

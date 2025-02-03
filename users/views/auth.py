@@ -4,7 +4,7 @@ from rest_framework_simplejwt import views
 @extend_schema_view(
     post=extend_schema(
         summary='Создание Токена',
-        tags=['Токены для Аутентификации']
+        tags=['🔑 Токены для Аутентификации']
     )
 )
 class CustomTokenObtainPairView(views.TokenObtainPairView):
@@ -15,7 +15,7 @@ class CustomTokenObtainPairView(views.TokenObtainPairView):
 @extend_schema_view(
     post=extend_schema(
         summary='Обновление Токена',
-        tags=['Токены для Аутентификации']
+        tags=['🔑 Токены для Аутентификации']
     )
 )
 class CustomTokenRefreshView(views.TokenRefreshView):
@@ -26,7 +26,7 @@ class CustomTokenRefreshView(views.TokenRefreshView):
 @extend_schema_view(
     post=extend_schema(
         summary='Проверка Токена',
-        tags=['Токены для Аутентификации']
+        tags=['🔑 Токены для Аутентификации']
     )
 )
 class CustomTokenVerifyView(views.TokenVerifyView):

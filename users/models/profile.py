@@ -7,7 +7,7 @@ from common.models.models import BaseModel
 
 # User = get_user_model()
 
-class Profile(BaseModel):
+class Profile(models.Model):
 
     user = models.OneToOneField(
         to='users.User',

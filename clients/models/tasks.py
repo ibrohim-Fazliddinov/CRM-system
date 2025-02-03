@@ -68,4 +68,4 @@ class Task(BaseModel, InfoMixin):
         verbose_name_plural = 'Задачи'
 
     def __str__(self):
-        return f'{self.name} ({self.get_status_display()})'
+        return f'{self.name}'

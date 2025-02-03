@@ -16,31 +16,31 @@ from clients.models.client import Client
 @extend_schema_view(
     search=extend_schema(
         summary='Поиск клиента',
-        tags=['Клиенты']
+        tags=['👥 Клиенты']
     ),
     list=extend_schema(
         summary='Получить список клиентов',
-        tags=['Клиенты']
+        tags=['👥 Клиенты']
     ),
     create=extend_schema(
         summary='Регистрация нового клиента',
-        tags=['Клиенты']
+        tags=['👥 Клиенты']
     ),
     partial_update=extend_schema(
         summary='Обновление информации о клиенте',
-        tags=['Клиенты']
+        tags=['👥 Клиенты']
     ),
     update=extend_schema(
         summary='Обновление информации о клиенте',
-        tags=['Клиенты']
+        tags=['👥 Клиенты']
     ),
     destroy=extend_schema(
         summary='Удаление клиента',
-        tags=['Клиенты']
+        tags=['👥 Клиенты']
     ),
     retrieve=extend_schema(
         summary='Просмотр клиента',
-        tags = ['Клиенты']
+        tags=['👥 Клиенты']
     )
 )
 class ClientView(CRUDListViewSet):

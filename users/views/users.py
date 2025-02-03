@@ -181,17 +181,17 @@ class AuthView(ExtendedUserViewSet):
 @extend_schema_view(
     change_password=extend_schema(
         summary='',
-        tags=['Пароль'],
+        tags=['🔐 Пароль'],
     ),
 
     reset_password=extend_schema(
         summary='',
-        tags=['Пароль']
+        tags=['🔐 Пароль'],
     ),
 
     reset_password_confirm=extend_schema(
         summary='',
-        tags=['Пароль']
+        tags=['🔐 Пароль'],
     )
 )
 class PasswordChangingView(ExtendedUserViewSet):
