@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from clients.models.client import Client
@@ -47,3 +48,10 @@ class Deal(BaseModel, InfoMixin):
     def __str__(self):
         return f'{self.name}'
 
+    def save(self, *args, **kwargs) -> None:
+        if self.client:
+            deal_count = Deal.objects.filter(client=self.client, status_deal='В работе').count()
+            if deal_count >=3:
+                raise ValidationError('..............DEAL IS OVER')
+
+        super().save(*args, **kwargs)

@@ -1,5 +1,8 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
+
+
 from common.models.mixins import InfoMixin
 from common.models.models import BaseModel
 
@@ -33,3 +36,10 @@ class Client(BaseModel, InfoMixin):
 
     def __str__(self):
         return f'Client:{self.pk}|{self.email} -  Manager:{self.manager}'
+
+    # def save(self, *args, **kwargs) -> None:
+    #     if self.manager:  # Убеждаемся, что менеджер указан
+    #         client_count = Client.objects.filter(manager=self.manager).count()
+    #         if client_count >= 5:
+    #             raise ValidationError(f'Менеджер {self.manager} уже управляет 3 клиентами, нельзя добавить больше.')
+    #     super().save(*args, **kwargs)

@@ -16,5 +16,4 @@ class ClientSHortSerializer(serializers.ModelSerializer):
             'email',
             'manager',
             'created_by',
-            'notes',
         )

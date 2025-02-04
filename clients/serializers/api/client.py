@@ -39,7 +39,6 @@ class ClientListSerializer(serializers.ModelSerializer):
             'address',
             'created_by',
             'created_at',
-            'notes',
         )
 
 class CreateClientSerializer(serializers.ModelSerializer):
@@ -48,6 +47,7 @@ class CreateClientSerializer(serializers.ModelSerializer):
     Поддерживает ввод пароля и проверку email на уникальность.
     """
     password = serializers.CharField(write_only=True)
+    manager = UserListSerializer(read_only=True)
 
     class Meta:
         model = Client
@@ -56,6 +56,7 @@ class CreateClientSerializer(serializers.ModelSerializer):
             'email',
             'name',
             'password',
+            'manager',
         )
 
     @staticmethod
@@ -71,6 +72,15 @@ class CreateClientSerializer(serializers.ModelSerializer):
         if User.objects.filter(email=email).exists():
             raise ValidationError('Пользователь с такой почтой уже зарегистрирован!')
         return email
+
+    def validate(self, attrs):
+        manager = attrs.get('manager') or self.context['request'].user
+        if manager:
+            client_count = Client.objects.filter(manager=manager).count()
+            if client_count >= 5:
+                raise ValidationError(
+                    {'manager': f'Менеджер {manager} уже управляет 5 клиентами, нельзя добавить больше.'})
+        return attrs
 
     def create(self, validated_data):
         """
@@ -102,7 +112,6 @@ class ClientUpdateSerializer(serializers.ModelSerializer):
             'email',
             'company',
             'address',
-            'notes',
         )
 
     def validate_email(self, value: str) -> str:
