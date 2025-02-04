@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError
 from clients.models.client import Client
+from common.validators import ManagerClientLimitValidator
 from users.serializers.api.serializer_user import UserListSerializer
 User = get_user_model()
 
@@ -58,6 +59,9 @@ class CreateClientSerializer(serializers.ModelSerializer):
             'password',
             'manager',
         )
+        # extra_kwargs = {
+        #     'manager': {'validators': [ManagerClientLimitValidator()]}
+        # }
 
     @staticmethod
     def validate_email(value: str) -> str:
@@ -81,6 +85,7 @@ class CreateClientSerializer(serializers.ModelSerializer):
                 raise ValidationError(
                     {'manager': f'Менеджер {manager} уже управляет 5 клиентами, нельзя добавить больше.'})
         return attrs
+
 
     def create(self, validated_data):
         """

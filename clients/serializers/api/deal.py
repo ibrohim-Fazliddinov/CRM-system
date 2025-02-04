@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from clients.models.client import Client
 from clients.models.deals import Deal
 from clients.serializers.api.client import ClientListSerializer
@@ -52,6 +54,21 @@ class DealCreateSerializer(BaseDealSerializer):
     class Meta(BaseDealSerializer.Meta):
         fields = BaseDealSerializer.Meta.fields + ('client', 'client_id')
 
+    def validate(self, attrs):
+        """
+        Валидация на количество активных сделок у клиента.
+        Проверяется, что у клиента не больше 3 сделок со статусом "В работе".
+        """
+        client = attrs.get('client') or self.context['request'].user.client
+        if client:
+            # Проверяем количество активных сделок клиента со статусом "В работе"
+            deal_count = Deal.objects.filter(client=client, status_deal='PRG').count()
+            if deal_count >= 3:
+                raise ValidationError(
+                    {'client': 'У клиента уже есть 3 активные сделки, нельзя добавить больше.'}
+                )
+        return attrs
+
     def validate_amount(self, value):
         """
         Проверяет, что сумма сделки больше нуля.
@@ -59,6 +76,7 @@ class DealCreateSerializer(BaseDealSerializer):
         if value <= 0:
             raise serializers.ValidationError("Сумма сделки должна быть больше нуля.")
         return value
+
 
 
 class DealDeleteSerializer(serializers.ModelSerializer):
