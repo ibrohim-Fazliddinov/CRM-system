@@ -1,5 +1,5 @@
 from drf_spectacular.utils import extend_schema_view, extend_schema
-from clients.models.tasks import Task
+from clients.models.model_tk import Task
 from clients.serializers.api.task import (
     TaskCreateSerializer,
     TaskUpdateSerializer,

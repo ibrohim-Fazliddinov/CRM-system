@@ -1,15 +1,14 @@
 from typing import Optional, Union
-
 from crum import get_current_user
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.conf import settings
 from djoser.serializers import ActivationSerializer
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.status import HTTP_204_NO_CONTENT
 from common.views import ExtendedUserViewSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from users.serializers.api.serializer_user import (
@@ -21,7 +20,7 @@ from users.serializers.api.serializer_user import (
     CustomResetPasswordSerializer,
     CustomResetPasswordConfirmSerializer,
 )
-from users.services.tasks.reset_password import UserResetPasswordService
+from users.services.tasks.tasks import UserResetPasswordConfirmService, UserResetPasswordService
 
 User = get_user_model()
 
@@ -171,7 +170,7 @@ class AuthView(ExtendedUserViewSet):
     ordering = ['username', '-id']  # Сортировка по умолчанию
 
     @action(methods=['GET'], detail=False)
-    def user_search(self, request: Request) -> Response:
+    def user_search(self) -> Response:
         """
         Метод для поиска пользователей с применением фильтров и сортировки.
 
@@ -196,21 +195,25 @@ class AuthView(ExtendedUserViewSet):
 
 @extend_schema_view(
     change_password=extend_schema(
-        summary='',
+        summary='Смена пароля пользователя.',
         tags=['🔐 Пароль'],
     ),
-
     reset_password=extend_schema(
-        summary='',
+        summary='Запрос на сброс пароля.',
         tags=['🔐 Пароль'],
     ),
-
     reset_password_confirm=extend_schema(
-        summary='',
+        summary='Подтверждение сброса пароля.',
         tags=['🔐 Пароль'],
     )
 )
 class PasswordChangingView(ExtendedUserViewSet):
+    """
+    Представление для управления паролями пользователей.
+
+    Данный viewset предоставляет функциональность смены пароля,
+    запроса на сброс пароля и подтверждения сброса пароля.
+    """
 
     serializer_class = ChangePasswordSerializer()
     multi_serializer_class = {
@@ -221,14 +224,37 @@ class PasswordChangingView(ExtendedUserViewSet):
 
     @action(methods=['POST'], detail=False)
     def change_password(self, request: Request) -> Response:
+        """
+        Смена пароля текущего аутентифицированного пользователя.
+
+        - Получает текущего пользователя из контекста.
+        - Проверяет валидность данных через сериализатор.
+        - Сохраняет новый пароль.
+        - Возвращает статус 204 (успешное выполнение без контента).
+
+        :param request: Объект HTTP-запроса с новыми данными пароля.
+        :return: HTTP 204 No Content в случае успеха.
+        """
         user = get_current_user()
         serializer = self.get_serializer(instance=user, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(status=HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['POST'], detail=False)
     def reset_password(self, request: Request, *args: None, **kwargs: None) -> Response:
+        """
+        Инициирует процесс сброса пароля для пользователя.
+
+        - Проверяет валидность введённых данных.
+        - Получает текущего пользователя (если авторизован) или ищет по email.
+        - Создаёт контекст для email-уведомления.
+        - Запускает сервис сброса пароля, отправляя письмо с инструкциями.
+        - Возвращает HTTP 204 No Content в случае успеха.
+
+        :param request: Объект HTTP-запроса с email пользователя.
+        :return: HTTP 204 No Content, если письмо отправлено.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = get_current_user()
@@ -239,5 +265,28 @@ class PasswordChangingView(ExtendedUserViewSet):
 
     @action(methods=['POST'], detail=False)
     def reset_password_confirm(self, request: Request, *args: None, **kwargs: None) -> Response:
-        pass
+        """
+        Подтверждение сброса пароля с помощью кода или токена.
 
+        - Проверяет валидность переданных данных (код сброса, новый пароль).
+        - Определяет пользователя по токену или коду.
+        - Создаёт контекст для email-уведомления.
+        - Запускает сервис подтверждения сброса пароля.
+        - Возвращает HTTP 204 No Content в случае успеха.
+
+        :param request: Объект HTTP-запроса с токеном/кодом и новым паролем.
+        :return: HTTP 204 No Content после успешного сброса пароля.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.user
+        context = get_context(
+            user=user,
+            request=request,
+            send_email=settings.DJOSER.get('PASSWORD_CHANGED_EMAIL_CONFIRMATION', False),
+        )
+        reset_password_confirm = UserResetPasswordConfirmService(
+            user=user, context=context, serializer=serializer,
+        )
+        reset_password_confirm.execute()
+        return Response(status=status.HTTP_204_NO_CONTENT)

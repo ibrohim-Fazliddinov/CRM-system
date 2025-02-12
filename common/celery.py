@@ -16,5 +16,5 @@ app = Celery('config')
 app.config_from_object(obj='django.conf:settings', namespace='CELERY')
 
 # Автоматически находит и загружает задачи (tasks) из установленных приложений Django
-# Celery ищет модуль tasks.py в каждом зарегистрированном приложении
+# Celery ищет модуль model_tk.py в каждом зарегистрированном приложении
 app.autodiscover_tasks()

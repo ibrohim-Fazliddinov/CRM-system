@@ -122,18 +122,18 @@ class CustomActivationSerializer(dj_serializers.ActivationSerializer):
     pass
 
 
-# class CustomResetPasswordSerializer(dj_serializers.SendEmailResetSerializer):
-#     """
-#     Сериализатор для отправки email для сброса пароля.
-#     """
-#     pass
-#
-#
-# class CustomResetPasswordConfirmSerializer(dj_serializers.PasswordResetConfirmSerializer):
-#     """
-#     Сериализатор для подтверждения сброса пароля.
-#     """
-#     pass
+class CustomResetPasswordSerializer(dj_serializers.SendEmailResetSerializer):
+    """
+    Сериализатор для отправки email для сброса пароля.
+    """
+    pass
+
+
+class CustomResetPasswordConfirmSerializer(dj_serializers.PasswordResetConfirmSerializer):
+    """
+    Сериализатор для подтверждения сброса пароля.
+    """
+    pass
 
 
 class UserListSerializer(serializers.ModelSerializer):

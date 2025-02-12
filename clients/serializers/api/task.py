@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from clients.models.deals import Deal
-from clients.models.tasks import Task
+from clients.models.model_tk import Task
 from clients.serializers.api.deal import DealListSerializer, BaseDealSerializer
 from clients.serializers.nested.client import ClientSHortSerializer
 

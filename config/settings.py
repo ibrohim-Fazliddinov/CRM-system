@@ -220,7 +220,7 @@ CELERY_TIMEZONE = os.getenv("TIMEZONE",)
 # Настройка периодических задач Celery Beat
 CELERY_BEAT_SCHEDULE = {
     "backup_database": {
-        # Путь к задаче, указанной в tasks.py
+        # Путь к задаче, указанной в model_tk.py
         "task": "common.tasks.db_backup_task",
         # Резервное копирование БД каждый день в полночь
         "schedule": crontab(hour=0, minute=0),

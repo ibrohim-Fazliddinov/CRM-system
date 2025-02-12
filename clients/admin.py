@@ -1,7 +1,7 @@
 from django.contrib import admin
 from clients.models.client import Client
 from clients.models.deals import Deal
-from clients.models.tasks import Task
+from clients.models.model_tk import Task
 
 class AdminMixin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'created_by', 'updated_by', 'updated_at',)
