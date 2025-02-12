@@ -1,8 +1,11 @@
+from typing import Optional, Union
+
 from crum import get_current_user
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.serializers import ActivationSerializer
 from drf_spectacular.utils import extend_schema_view, extend_schema
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -18,9 +21,22 @@ from users.serializers.api.serializer_user import (
     CustomResetPasswordSerializer,
     CustomResetPasswordConfirmSerializer,
 )
+from users.services.tasks.reset_password import UserResetPasswordService
 
 User = get_user_model()
 
+def get_context(
+        user: User, request: Request, send_email: bool
+) -> Optional[dict[str, Union[str, int]]]:
+    """Получить контекст для отправки электронного письма."""
+    if send_email:
+        context = {
+            'user_id': user.pk,
+            'domain': request.get_host(),
+            'protocol': 'https' if request.is_secure() else 'http',
+            'site_name': request.get_host(),
+        }
+        return context
 
 @extend_schema_view(
     registration=extend_schema(
@@ -213,7 +229,13 @@ class PasswordChangingView(ExtendedUserViewSet):
 
     @action(methods=['POST'], detail=False)
     def reset_password(self, request: Request, *args: None, **kwargs: None) -> Response:
-        pass
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = get_current_user()
+        context = get_context(user, request, bool(user))
+        reset_password = UserResetPasswordService(user, context)
+        reset_password.execute()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['POST'], detail=False)
     def reset_password_confirm(self, request: Request, *args: None, **kwargs: None) -> Response:

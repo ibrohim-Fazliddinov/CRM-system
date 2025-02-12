@@ -78,7 +78,6 @@ class DealCreateSerializer(BaseDealSerializer):
         return value
 
 
-
 class DealDeleteSerializer(serializers.ModelSerializer):
     """
     Сериализатор для удаления сделки.

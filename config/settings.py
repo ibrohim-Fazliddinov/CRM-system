@@ -1,7 +1,6 @@
 import os
 from datetime import timedelta
-from tkinter.constants import DISABLED
-
+from celery.schedules import crontab
 import environ
 
 # region ---------------------- BASE CONFIGURATION -----------------------------------------
@@ -196,6 +195,40 @@ USE_TZ = True    # Enable timezone support
 # endregion ---------------------------------------------------------------------------------
 
 
+# region ---------------------- CELERY ------------------------------------------------
+
+# Использование брокера сообщений для Celery (Redis)
+CELERY_BROKER_URL = os.getenv("REDDIS_URL", "redis://localhost:6379/0")
+
+# Использование Redis для хранения результатов выполнения задач
+CELERY_RESULT_BACKEND = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+
+# Отслеживание состояния выполнения задач (по умолчанию выключено)
+CELERY_TASK_TRACK_STARTED = os.getenv("CELERY_TASK_TRACK_STARTED", "False").lower() in ("true", "1", "yes")
+
+# Максимальное время выполнения задачи (30 минут)
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# Поддерживаемые форматы сериализации данных
+CELERY_ACCEPT_CONTENT = [os.getenv("ACCEPT_CONTENT", "json")]
+CELERY_RESULT_SERIALIZER = os.getenv("RESULT_SERIALIZER", "json")
+CELERY_TASK_SERIALIZER = os.getenv("TASK_SERIALIZER", "json")
+
+# Указание временной зоны сервера для корректного выполнения задач по расписанию
+CELERY_TIMEZONE = os.getenv("TIMEZONE",)
+
+# Настройка периодических задач Celery Beat
+CELERY_BEAT_SCHEDULE = {
+    "backup_database": {
+        # Путь к задаче, указанной в tasks.py
+        "task": "common.tasks.db_backup_task",
+        # Резервное копирование БД каждый день в полночь
+        "schedule": crontab(hour=0, minute=0),
+    },
+}
+
+# endregion ---------------------------------------------------------------------------------
+
 # region ------------------------- STATIC AND MEDIA ----------------------------------------
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
@@ -208,3 +241,15 @@ MEDIA_TEST_ROOT = os.path.join(BASE_DIR, 'media/test/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
+
+# region ---------------------- SMTP ------------------------------------------------
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# Настройка почтового сервера по SMTP-протоколу
+EMAIL_HOST = env.str('EMAIL_HOST')
+EMAIL_PORT = env.int('EMAIL_PORT')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS')
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
+SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# endregion ---------------------------------------------------------------------------------
