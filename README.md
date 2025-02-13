@@ -15,7 +15,7 @@ CRM-система предназначена для управления кли
 
 ## 🛠️ Стек технологий
 - **Backend**: Django + DRF
-- **Database**: PostgreSQL
+- **Database**: PostgreSQL + SQLite
 - **Асинхронные задачи**: Celery + Redis
 - **Документация API**: Swagger
 - **Тестирование**: Pytest, Django Test Client
@@ -26,19 +26,19 @@ CRM-система предназначена для управления кли
 
 ### 🔧 1. Клонирование репозитория
 ```bash
-git clone https://github.com/your-repo/crm-system.git
+git clone https://github.com/ibrohim-Fazliddinov/CRM-system.git
 cd crm-system
 ```
 
 ### 📦 2. Создание виртуального окружения
 ```bash
-python -m venv venv
-source venv/bin/activate  # Для Windows: venv\Scripts\activate
+$ python -m venv venv
+$ source venv/bin/activate  # Для Windows: venv\Scripts\activate
 ```
 
 ### 📌 3. Установка зависимостей
 ```bash
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 ### 🛠️ 4. Настройка переменных окружения
@@ -75,13 +75,13 @@ TIMEZONE=
 
 ### 🚀 5. Применение миграций
 ```bash
-python manage.py migrate
-python manage.py createsuperuser  # Создание администратора
+$ python manage.py migrate
+$ python manage.py createsuperuser  # Создание администратора
 ```
 
 ### ▶️ 6. Запуск сервера
 ```bash
-python manage.py runserver
+$ python manage.py runserver
 ```
 
 ---
@@ -133,7 +133,7 @@ python manage.py runserver
 
 ## ✅ Тестирование * In Develompent
 ```bash
-pytest
+$ pytest
 ```
 
 ---
@@ -141,21 +141,21 @@ pytest
 ## 📦 Деплой * In Develompent
 ### 📌 1. Запуск через Docker
 ```bash
-docker-compose up --build
+$ docker-compose up --build
 ```
 
 ### 📌 2. Запуск Celery
 ```bash
-celery -A config worker --loglevel=info
+$ celery -A config worker --loglevel=info
 ```
 
 ### 📌 3. Запуск Flower (Мониторинг Celery) * In Develompent
 ```bash
-celery -A crm_system flower
+$ celery -A crm_system flower
 ```
 
 ---
 
 ## ✨ Авторы
-**Разработчик**: [ibrohim-Fazliddinov]
+**Разработчик**: [ibrohim-Fazliddinov]()
 
